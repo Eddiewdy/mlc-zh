@@ -1,0 +1,93 @@
+2022-11-25 12:22:28 [INFO] [task_scheduler.cc:158] Initializing Task #0: "main"
+2022-11-25 12:22:28 [INFO] [task_scheduler.cc:35] 
+# from tvm.script import tir as T
+@tvm.script.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.Buffer[(128, 128), "float32"], B: T.Buffer[(128, 128), "float32"], C: T.Buffer[(128, 128), "float32"]):
+        # function attr dict
+        T.func_attr({"tir.noalias": True, "global_symbol": "main"})
+        # body
+        # with T.block("root")
+        for i, j, k in T.grid(128, 128, 128):
+            with T.block("C"):
+                vi, vj, vk = T.axis.remap("SSR", [i, j, k])
+                T.reads(A[vi, vk], B[vk, vj])
+                T.writes(C[vi, vj])
+                with T.init():
+                    C[vi, vj] = T.float32(0)
+                C[vi, vj] = C[vi, vj] + A[vi, vk] * B[vk, vj]
+    
+
+2022-11-25 12:22:28 [INFO] [task_scheduler.cc:162] Total 1 design space(s) generated
+2022-11-25 12:22:28 [INFO] [task_scheduler.cc:168] Design space #0:
+# from tvm.script import tir as T
+@tvm.script.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.Buffer[(128, 128), "float32"], B: T.Buffer[(128, 128), "float32"], C: T.Buffer[(128, 128), "float32"]):
+        # function attr dict
+        T.func_attr({"tir.noalias": True, "global_symbol": "main"})
+        # body
+        # with T.block("root")
+        for i, j_0 in T.grid(128, 64):
+            for j_1_init in T.serial(2):
+                with T.block("C_init"):
+                    vi = T.axis.spatial(128, i)
+                    vj = T.axis.spatial(128, j_0 * 2 + j_1_init)
+                    T.reads()
+                    T.writes(C[vi, vj])
+                    C[vi, vj] = T.float32(0)
+            for k, j_1 in T.grid(128, 2):
+                with T.block("C_update"):
+                    vi = T.axis.spatial(128, i)
+                    vj = T.axis.spatial(128, j_0 * 2 + j_1)
+                    vk = T.axis.reduce(128, k)
+                    T.reads(C[vi, vj], A[vi, vk], B[vk, vj])
+                    T.writes(C[vi, vj])
+                    C[vi, vj] = C[vi, vj] + A[vi, vk] * B[vk, vj]
+    
+
+b0 = sch.get_block(name="C", func_name="main")
+l1, l2, l3 = sch.get_loops(block=b0)
+v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[64, 2])
+l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True)
+sch.reorder(l1, l6, l3, l7)
+b8 = sch.decompose_reduction(block=b0, loop=l3)
+2022-11-25 12:22:28 [INFO] [evolutionary_search.cc:713] Generating candidates......
+2022-11-25 12:22:28 [INFO] [evolutionary_search.cc:715] Picked top 0 candidate(s) from database
+2022-11-25 12:22:28 [INFO] [evolutionary_search.cc:533] Sample-Init-Population summary:
+Postproc #0 [meta_schedule.DisallowDynamicLoop(0x106854bc8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteParallelVectorizeUnroll(0x106854be8)]: 0 failure(s)
+Postproc #2 [meta_schedule.RewriteReductionBlock(0x106853558)]: 0 failure(s)
+Postproc #3 [meta_schedule.RewriteLayout(0x106853578)]: 0 failure(s)
+2022-11-25 12:22:28 [INFO] [evolutionary_search.cc:723] Sampled 512 candidate(s)
+2022-11-25 12:22:28 [INFO] [evolutionary_search.cc:621] Evolve iter #0 done. Summary:
+Postproc #0 [meta_schedule.DisallowDynamicLoop(0x106854bc8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteParallelVectorizeUnroll(0x106854be8)]: 0 failure(s)
+Postproc #2 [meta_schedule.RewriteReductionBlock(0x106853558)]: 0 failure(s)
+Postproc #3 [meta_schedule.RewriteLayout(0x106853578)]: 0 failure(s)
+2022-11-25 12:22:29 [INFO] [evolutionary_search.cc:621] Evolve iter #1 done. Summary:
+Postproc #0 [meta_schedule.DisallowDynamicLoop(0x106854bc8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteParallelVectorizeUnroll(0x106854be8)]: 0 failure(s)
+Postproc #2 [meta_schedule.RewriteReductionBlock(0x106853558)]: 0 failure(s)
+Postproc #3 [meta_schedule.RewriteLayout(0x106853578)]: 0 failure(s)
+2022-11-25 12:22:29 [INFO] [evolutionary_search.cc:621] Evolve iter #2 done. Summary:
+Postproc #0 [meta_schedule.DisallowDynamicLoop(0x106854bc8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteParallelVectorizeUnroll(0x106854be8)]: 0 failure(s)
+Postproc #2 [meta_schedule.RewriteReductionBlock(0x106853558)]: 0 failure(s)
+Postproc #3 [meta_schedule.RewriteLayout(0x106853578)]: 0 failure(s)
+2022-11-25 12:22:29 [INFO] [evolutionary_search.cc:621] Evolve iter #3 done. Summary:
+Postproc #0 [meta_schedule.DisallowDynamicLoop(0x106854bc8)]: 0 failure(s)
+Postproc #1 [meta_schedule.RewriteParallelVectorizeUnroll(0x106854be8)]: 0 failure(s)
+Postproc #2 [meta_schedule.RewriteReductionBlock(0x106853558)]: 0 failure(s)
+Postproc #3 [meta_schedule.RewriteLayout(0x106853578)]: 0 failure(s)
+2022-11-25 12:22:29 [INFO] [evolutionary_search.cc:649] Scores of the best 5 candidates:
+[1 : 5]:	0.9279  0.4562  0.3721  0.3340  0.2127
+2022-11-25 12:22:29 [INFO] [evolutionary_search.cc:727] Got 5 candidate(s) with evolutionary search
+2022-11-25 12:22:29 [INFO] [evolutionary_search.cc:730] Sending 5 candidates(s) for measurement
+2022-11-25 12:22:55 [INFO] [task_scheduler.cc:129] [Task #0: main] Trial #1: GFLOPs: 17.4503. Time: 240.3572 us. Best GFLOPs: 17.4503
+2022-11-25 12:22:55 [INFO] [task_scheduler.cc:129] [Task #0: main] Trial #2: GFLOPs: 26.6532. Time: 157.3660 us. Best GFLOPs: 26.6532
+2022-11-25 12:22:55 [INFO] [task_scheduler.cc:129] [Task #0: main] Trial #3: GFLOPs: 8.4662. Time: 495.4174 us. Best GFLOPs: 26.6532
+2022-11-25 12:22:55 [INFO] [task_scheduler.cc:129] [Task #0: main] Trial #4: GFLOPs: 3.4316. Time: 1222.2504 us. Best GFLOPs: 26.6532
+2022-11-25 12:22:55 [INFO] [task_scheduler.cc:129] [Task #0: main] Trial #5: GFLOPs: 2.3213. Time: 1806.8627 us. Best GFLOPs: 26.6532

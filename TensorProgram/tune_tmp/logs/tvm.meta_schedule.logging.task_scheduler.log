@@ -1,0 +1,15 @@
+2022-11-25 12:22:23 [INFO] Logging directory: ./tune_tmp/logs
+2022-11-25 12:22:27 [INFO] LocalBuilder: max_workers = 8
+2022-11-25 12:22:28 [INFO] LocalRunner: max_workers = 1
+2022-11-25 12:22:28 [INFO] [task_scheduler.cc:157] Initializing Task #0: "main"
+2022-11-25 12:22:28 [INFO] [task_scheduler.cc:178] TaskScheduler picks Task #0: "main"
+2022-11-25 12:22:29 [INFO] [task_scheduler.cc:191] Sending 5 sample(s) to builder
+2022-11-25 12:22:30 [INFO] [task_scheduler.cc:193] Sending 5 sample(s) to runner
+2022-11-25 12:22:55 [DEBUG] XGB iter   0: tr-p-rmse: 0.328365	tr-a-peak@32: 1.000000	tr-rmse: 0.340888	tr-rmse: 0.340888
+2022-11-25 12:22:55 [DEBUG] XGB iter  25: tr-p-rmse: 0.147929	tr-a-peak@32: 1.000000	tr-rmse: 0.075168	tr-rmse: 0.075168
+2022-11-25 12:22:55 [DEBUG] XGB iter  50: tr-p-rmse: 0.141711	tr-a-peak@32: 1.000000	tr-rmse: 0.073015	tr-rmse: 0.073015
+2022-11-25 12:22:55 [DEBUG] XGB iter  75: tr-p-rmse: 0.141531	tr-a-peak@32: 1.000000	tr-rmse: 0.073014	tr-rmse: 0.073014
+2022-11-25 12:22:55 [DEBUG] XGB iter 100: tr-p-rmse: 0.141527	tr-a-peak@32: 1.000000	tr-rmse: 0.073014	tr-rmse: 0.073014
+2022-11-25 12:22:55 [DEBUG] XGB iter 125: tr-p-rmse: 0.141527	tr-a-peak@32: 1.000000	tr-rmse: 0.073014	tr-rmse: 0.073014
+2022-11-25 12:22:55 [DEBUG] XGB stopped. Best iteration: [88] tr-p-rmse:0.14153	tr-a-peak@32:1.00000	tr-rmse:0.07301	tr-rmse:0.07301 
+2022-11-25 12:22:55 [INFO] [task_scheduler.cc:235] [Updated] Task #0: "main"
